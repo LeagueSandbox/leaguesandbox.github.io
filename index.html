@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>League Sandbox by LeagueSandbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">League Sandbox</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="leaguesandbox" class="anchor" href="#leaguesandbox" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LeagueSandbox</h1>
+
+<p>DotNet port and continuation of IntWars</p>
+
+<p>Active fork of original IntWars: <a href="https://github.com/MythicManiac/IntWars/">https://github.com/MythicManiac/IntWars/</a><br>
+Project chat on Discord: <a href="https://discord.gg/0vmmZ6VAwXB05gB6">https://discord.gg/0vmmZ6VAwXB05gB6</a></p>
+
+<h1>
+<a id="c-guidelines" class="anchor" href="#c-guidelines" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>C# guidelines</h1>
+
+<ul>
+<li>Function names in <code>CamelCase</code>
+</li>
+<li>Constants in <code>ALL_CAPS</code>
+</li>
+<li>Private variables in <code>_pascalCaseWithUnderscore</code>
+</li>
+<li>Public properties as getters / setters in <code>CamelCase</code>
+</li>
+<li>All public variable access should happen through getters / setters</li>
+</ul>
+
+<h1>
+<a id="custom-content-data-structure" class="anchor" href="#custom-content-data-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Custom content data structure</h1>
+
+<pre><code>Data
+    LeagueSandbox-Default // A content package by "LeagueSandbox" called "Default"
+        Champions
+        Items
+        Buffs
+        ...
+    SomeAuthor-SomePackage // A content package by "SomeAuthor" called "SomePackage"
+        Champions
+        ...
+GameMode
+    LeagueSandbox-Default // Game mode by "LeagueSandbox" called "Default"
+        Data // Data that's local to this gamemode only
+            Champions
+            Items
+            Buffs
+            ...
+        Scripts // Game mode related logic
+            SomeScript.lua
+            SomeOtherScript.lua
+            ...
+        GameMode.json // Game mode configuration file
+</code></pre>
+
+<ul>
+<li>Two kinds of packages
+
+<ul>
+<li>Data packages
+
+<ul>
+<li>Contain data and logic for things such as champions, items, buffs, etc...</li>
+</ul>
+</li>
+<li>Game mode packages
+
+<ul>
+<li>Contain configuration and logic for the gamemode</li>
+<li>Configuration that determines what data this mode depends on</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Data should be stored in JSON files
+
+<ul>
+<li>So for example, damage, range, health, etc...</li>
+</ul>
+</li>
+<li>Logic should be stored in lua files
+
+<ul>
+<li>Lua is capable of using the data stored in the mentioned JSON files</li>
+</ul>
+</li>
+<li>These two should be always separate, so no mixing data into lua
+
+<ul>
+<li>All predetermined values in JSON</li>
+</ul>
+</li>
+<li>Packages are to be named using a - format
+
+<ul>
+<li>This to avoid collisions with similarly named packages</li>
+</ul>
+</li>
+<li>Content will be identified in a --- format, thus why namespacing is required</li>
+</ul>
+
+<h1>
+<a id="planned-overall-configurationinfrastructure" class="anchor" href="#planned-overall-configurationinfrastructure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Planned overall configuration/infrastructure</h1>
+
+<p>5 different components:</p>
+
+<ul>
+<li>League of Legends 4.20 Client
+
+<ul>
+<li>By Riot</li>
+<li>Will be modified only by the client patcher</li>
+</ul>
+</li>
+<li>Content serializer
+
+<ul>
+<li>Patches custom content into the game client's files</li>
+<li>Serializes custom content into a format the game can understand</li>
+<li>Deserializes the game's content into our custom content format</li>
+<li>Builds single file packages out of custom content packages</li>
+</ul>
+</li>
+<li>Lobby client
+
+<ul>
+<li>Client that can connect to lobby servers</li>
+<li>Game mode selection</li>
+<li>User settings (champion, summoner spells, etc)</li>
+<li>Game mode settings (if a gamemode has configurable settings, say, kill limit for a deathmatch victory)
+
+<ul>
+<li>Host only</li>
+</ul>
+</li>
+<li>Receives custom content from the lobby server before the game is started</li>
+</ul>
+</li>
+<li>Lobby server
+
+<ul>
+<li>Lobby clients can create lobbies
+
+<ul>
+<li>Lobby creator gets host privileges</li>
+</ul>
+</li>
+<li>Lobby clients can connect to existing lobbies</li>
+<li>Sends lobby clients the gamemode specific custom content</li>
+<li>Takes care of launching the game server when the game is started</li>
+</ul>
+</li>
+<li>Game server
+
+<ul>
+<li>Receives game settings from the lobby server</li>
+<li>Runs the game according to the received settings</li>
+</ul>
+</li>
+</ul>
+
+<h1>
+<a id="leaguesandbox-credits" class="anchor" href="#leaguesandbox-credits" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LeagueSandbox Credits</h1>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intline9</td>
+<td>Original creator</td>
+<td><a href="https://github.com/Intline9">https://github.com/Intline9</a></td>
+</tr>
+<tr>
+<td>Ltsstar</td>
+<td>Contributor</td>
+<td><a href="https://github.com/ltsstar">https://github.com/ltsstar</a></td>
+</tr>
+<tr>
+<td>Elyotna</td>
+<td>Contributor</td>
+<td><a href="https://github.com/Elyotna">https://github.com/Elyotna</a></td>
+</tr>
+<tr>
+<td>Horato</td>
+<td>C# port original author</td>
+<td><a href="https://github.com/horato">https://github.com/horato</a></td>
+</tr>
+<tr>
+<td>Eddy5641</td>
+<td>Contributor</td>
+<td><a href="https://github.com/eddy5641">https://github.com/eddy5641</a></td>
+</tr>
+<tr>
+<td>Chutch1122</td>
+<td>Contributor</td>
+<td><a href="https://github.com/chutch1122">https://github.com/chutch1122</a></td>
+</tr>
+<tr>
+<td>Spudgy</td>
+<td>Contributor</td>
+<td><a href="https://github.com/spudgy">https://github.com/spudgy</a></td>
+</tr>
+<tr>
+<td>Mythic</td>
+<td>Current lead developer</td>
+<td><a href="https://github.com/MythicManiac">https://github.com/MythicManiac</a></td>
+</tr>
+<tr>
+<td>Coquicox</td>
+<td>Contributor</td>
+<td><a href="https://github.com/coquicox">https://github.com/coquicox</a></td>
+</tr>
+<tr>
+<td>NitroXenon</td>
+<td>Contributor</td>
+<td><a href="https://github.com/NitroXenon">https://github.com/NitroXenon</a></td>
+</tr>
+<tr>
+<td>Fighter19</td>
+<td>Contributor</td>
+<td><a href="https://github.com/Fighter19">https://github.com/Fighter19</a></td>
+</tr>
+<tr>
+<td>Molenzwiebel</td>
+<td>Contributor</td>
+<td><a href="https://github.com/molenzwiebel">https://github.com/molenzwiebel</a></td>
+</tr>
+<tr>
+<td>TheWebs</td>
+<td>Contributor</td>
+<td><a href="https://github.com/TheWebs">https://github.com/TheWebs</a></td>
+</tr>
+</tbody>
+</table>
+
+      <footer class="site-footer">
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
