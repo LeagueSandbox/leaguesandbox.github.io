@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="UTF-8">
+        <title>League Sandbox by LeagueSandbox</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    </head>
+    <body>
+        <section class="page-header">
+            <h1 class="project-name">League Sandbox</h1>
+            <h2 class="project-tagline"></h2>
+        </section>
+        <section class="main-content">
+            <h1>
+                <a id="lobby-system-specifications" class="anchor" href="#lobby-system-specifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lobby system specifications
+            </h1>
+            <p>
+                Specifications of the lobby client/server system.<br>
+                Everything listed here is still a draft and open for change.
+            </p>
+            <h1>
+                <a id="usecases" class="anchor" href="#usecases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use cases
+            </h1>
+            <ul>
+                <li>As an user, I want to be able to change my nickname on the lobby server</li>
+                <li>
+                    As an user, I want to be able to view a list of all lobbies and their information
+                    <ul>
+                        <li>Player count</li>
+                        <li>Player limit</li>
+                        <li>Lobby name</li>
+                        <li>Currently selected gamemode</li>
+                        <li>Ping</li>
+                        <li>Is the lobby password protected</li>
+                        <li>Lobby host's name</li>
+                    </ul>
+                </li>
+                <li>As an user, I want to be able to see all other users viewing the lobby list</li>
+                <li>As an user, I want to be able to see chat messages on the lobby list</li>
+                <li>As an user, I want to be able to send chat messages on the lobby list</li>
+                <li>As an user, I want to be able to join a lobby from the lobby list</li>
+                <li>As an user, I want to retrieve chat history once I've joined the lobby</li>
+                <li>As an user, I want to be able to see other players in the lobby</li>
+                <li>As an user, I want to be able to send chat messages</li>
+                <li>As an user, I want to be able to choose my settings for the game</li>
+                <li>As an user, I want to be able to create a lobby if I have a server (local server by default)</li>
+                <li>As an user, I want to be able to directly connect to an IP</li>
+                <li>As a lobby host, I want to be able to change the name of my lobby</li>
+                <li>As a lobby host, I want to be able to view a list of all available game modes</li>
+                <li>As a lobby host, I want to be able to choose a game mode</li>
+                <li>As a lobby host, I want to be able to change my gamemode specific settings</li>
+                <li>As a lobby host, I want to be able to mute other players from chat</li>
+                <li>As a lobby host, I want to be able to kick other players from the lobby</li>
+                <li>As a lobby host, I want to be able to ban other players from the lobby</li>
+                <li>As a lobby host, I want to be able to password protect my lobby</li>
+                <li>As a lobby host, I want to be able to start the game</li>
+                <li>As a lobby host, I want to be able to enlist my lobby to a master lobby server</li>
+            </ul>
+            <h1>
+                <a id="client-to-server" class="anchor" href="#client-to-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client to server messages
+            </h1>
+            <p>Update name</p>
+            <pre><code>
+{
+    "type": "user-info",
+    "data": {
+        "name": {{user's new name}}
+    }
+}
+            </code></pre>
+            <p>Send chat message</p>
+            <pre><code>
+{
+    "type": "chat-message",
+    "data": {
+        "message": {{message}}
+    }
+}
+            </code></pre>
+            <p>Select game mode</p>
+            <pre><code>
+{
+    "type": "lobby-gamemode",
+    "data": {
+        "gamemode": {{gamemode's name}}
+    }
+}
+            </code></pre>
+            <p>Change setting value</p>
+            <pre><code>
+{
+    "type": "lobby-setting",
+    "data": {
+        "setting-binding": {{setting's binding value}},
+        "value": {{what the setting will be set to}}
+    }
+}
+            </code></pre>
+            <p>Kick/ban player</p>
+            <pre><code>
+{
+    "type": "lobby-kick",
+    "data": {
+        "player": {{player's id}},
+        "type": "kick"/"ban"/"mute"
+    }
+}
+            </code></pre>
+            <p>Connect to lobby</p>
+            <pre><code>
+{
+    "type": "lobby-connect",
+    "data": {
+        "name": {{player's name}},
+        "password": {{lobby's password, if one exists}}
+    }
+}
+            </code></pre>
+            <h1>
+                <a id="server-to-client" class="anchor" href="#server-to-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server to client messages
+            </h1>
+            <p>Add a new lobby to the list</p>
+            <pre><code>
+{
+    "type": "list-add",
+    "data": {
+        "name": {{lobby name}},
+        "creator": {{lobby's creator's name}},
+        "playerLimit": {{lobby's player limit}},
+        "playerCount": {{lobby's player count}},
+        "gameMode": {{lobby's gamemode}},
+        "requirePassword": {{is the lobby password protected}},
+        "id": {{id of the lobby}}
+    }
+}
+            </code></pre>
+            <p>Update a lobby on the list</p>
+            <pre><code>
+{
+    "type": "lobbylist-update",
+    "data": {
+        "name": {{lobby name}},
+        "creator": {{lobby's creator's name}},
+        "playerLimit": {{lobby's player limit}},
+        "playerCount": {{lobby's player count}},
+        "gameMode": {{lobby's gamemode}},
+        "requirePassword": {{is the lobby password protected}},
+        "id": {{id of the lobby}},
+        "address": {{ip address of the lobby}},
+        "port": {{port of the lobby}}
+    }
+}
+            </code></pre>
+            <p>Remove a lobby from the list</p>
+            <pre><code>
+{
+    "type": lobbylist-remove",
+    "data": {
+        "id": {{lobby's id to remove}}
+    }
+}
+            </code></pre>
+            <p>Add a new player to the list</p>
+            <pre><code>
+{
+    "type": "playerlist-add",
+    "data": {
+        "name": {{player's name}},
+        "id": {{player's id}}
+    }
+}
+            </code></pre>
+            <p>Update a player's info</p>
+            <pre><code>
+    {
+    "type": "playerlist-update",
+    "data": {
+        "name": {{player's name}},
+        "champion": {{player's selected champion}},
+        "ready": {{player's ready state}},
+        "isMuted": {{player's mute state}}
+    }
+}
+            </code></pre>
+            <p>Remove a player from the list</p>
+            <pre><code>
+{
+    "type": "playerlist-remove",
+    "data": {
+        "id": {{player's id}}
+    }
+}
+            </code></pre>
+            <p>Add a new chat message to the chat</p>
+            <pre><code>
+{
+    "type": "chat-message",
+    "data": {
+        "sender": {{sender's name}},
+        "message": {{message contents}}
+    }
+}
+            </code></pre>
+            <p>Add a batch of chat messages to the chat</p>
+            <pre><code>
+{
+    "type": "chat-message-batch",
+    "data": {
+        "messages": [
+            {
+                "sender": {{sender's name}},
+                "message": {{message contents}}
+            },
+            ...
+        ]
+    }
+}
+            </code></pre>
+            <p>Lobby settings update</p>
+            <pre><code>
+{
+    "type": "lobby-settings",
+    "data": {
+        "gameMode": {{selected game mode}},
+        "hostSettings": [
+            {
+                "name": "Gold generation rate",
+                "help": "How much gold is generated per 5 seconds in game",
+                "field": "text",
+                "type": "float",
+                "default": "5",
+                "binding": "gold-generation-rate"
+            },
+            {
+                "name": "Enable gold generation",
+                "help": "Should gold generation be enabled?",
+                "field": "checkbox",
+                "type": "boolean",
+                "default": "true", //should allow "true" and "false" only
+                "binding": "gold-generation-enabled"
+            },
+            {
+                "name": "Lives",
+                "help": "How many times a player can respawn (-1 for unlimited)",
+                "field": "text",
+                "type": "integer",
+                "default": "-1",
+                "binding": "lives"
+            },
+            {
+                "name": "Damage multiplier",
+                "help": "Global damage multiplier",
+                "field": "select",
+                "type": "integer",
+                "options": [
+                    "1x": "1",
+                    "2x": "2",
+                    "4x": "4",
+                    "8x": "8"
+                ],
+                "default": "1", // index of selected option
+                "binding": "damage-multiplier"
+            },
+            {
+                "name": "Map",
+                "help": "The map the game is to be played on",
+                "field": "mapSelect",
+                "options": "*",
+                "binding": "map",
+            },
+            {
+                "name": "Enabled champions",
+                "help": "Allowed champions",
+                "field": "championSelectMulti",
+                "options": "*",
+                "default": "*",
+                "binding": "enabled-champions"
+            },
+            {
+                "name": "Enabled summoner spells",
+                "help": "Allowed summoner spells",
+                "field": "spellSelectMulti",
+                "options": "*",
+                "default": "*",
+                "binding": "enabled-spells"
+            }
+        ],
+        "playerSettings": [
+            {
+                "name": "Champion",
+                "help": "Champion you want to play",
+                "field": "championSelect",
+                "type": "championSelect",
+                "options": "{enabled-champions}"
+            },
+            {
+                "name": "Summoner spells",
+                "help": "The summoner spells you want to use",
+                "field": "summonerSpellSelect",
+                "options": "{enabled-spells}",
+            }
+        ]
+    }
+}
+            </code></pre>
+            <p>Gamemode list update</p>
+            <pre><code>
+{
+    "type": "lobby-gamemode",
+    "data": {
+        "LeagueSandbox-Default": [
+            "Dev",
+            "1.0.2",
+            "1.0.1",
+            "1.0.0"
+        ],
+        "Mythic-Dev": [
+            "Dev"
+        ],
+        "SomeGuy-SomeMode": [
+            "0.0.2",
+            "0.0.1"
+        ]
+    }
+}
+            </code></pre>
+            <p>Kicked from lobby</p>
+            <pre><code>
+{
+    "type": "lobby-kicked",
+    "data": {
+        "type": "kick"/"ban"
+    }
+}
+            </code></pre>
+            <h1>
+                <a id="lobby-to-master" class="anchor" href="#lobby-to-master" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lobby server to master lobby server messages
+            </h1>
+            <p>Heartbeat</p>
+            <pre><code>
+{
+    "type": "heartbeat",
+    "data": {
+        "name": {{lobby name}},
+        "creator": {{lobby's creator's name}},
+        "playerLimit": {{lobby's player limit}},
+        "playerCount": {{lobby's player count}},
+        "gameMode": {{lobby's gamemode}},
+        "requirePassword": {{is the lobby password protected}},
+    }
+}
+            </code></pre>
+            <footer class="site-footer">
+                <span class="site-footer-credits">This page was generated by <a href="https://github.com/MythicManiac">Mythic</a> using the source of the index page and Sublime Text 2.</span>
+            </footer>
+        </section>
+    </body>
+</html>
